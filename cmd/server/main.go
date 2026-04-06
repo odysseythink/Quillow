@@ -12,6 +12,7 @@ import (
 	currencyuc "github.com/anthropics/firefly-iii-go/internal/usecase/currency"
 	eruc "github.com/anthropics/firefly-iii-go/internal/usecase/exchangerate"
 	prefuc "github.com/anthropics/firefly-iii-go/internal/usecase/preference"
+	txuc "github.com/anthropics/firefly-iii-go/internal/usecase/transaction"
 	useruc "github.com/anthropics/firefly-iii-go/internal/usecase/user"
 	"github.com/anthropics/firefly-iii-go/pkg/config"
 	"github.com/anthropics/firefly-iii-go/pkg/database"
@@ -41,7 +42,7 @@ func main() {
 	if err := i18nSvc.LoadLocale("en_US"); err != nil {
 		log.Printf("Warning: failed to load en_US locale: %v", err)
 	}
-	_ = i18nSvc // Will be used by handlers in later SPs
+	_ = i18nSvc
 
 	// JWT
 	jwtSvc := jwt.NewService(cfg.JWT.Secret, cfg.JWT.AccessTokenExpiry, cfg.JWT.RefreshTokenExpiry)
@@ -53,6 +54,10 @@ func main() {
 	accountRepo := repository.NewAccountRepository(db)
 	currencyRepo := repository.NewCurrencyRepository(db)
 	exchangeRateRepo := repository.NewExchangeRateRepository(db)
+	txRepo := repository.NewTransactionRepository(db)
+	attachmentRepo := repository.NewAttachmentRepository(db)
+	linkTypeRepo := repository.NewLinkTypeRepository(db)
+	txLinkRepo := repository.NewTransactionLinkRepository(db)
 
 	// Usecases
 	authUC := authuc.NewUseCase(userRepo, jwtSvc)
@@ -62,6 +67,7 @@ func main() {
 	currUC := currencyuc.NewUseCase(currencyRepo)
 	accountUC := accountuc.NewUseCase(accountRepo, currencyRepo)
 	erUC := eruc.NewUseCase(exchangeRateRepo, currencyRepo)
+	transactionUC := txuc.NewUseCase(txRepo, accountRepo)
 
 	// Handlers
 	handlers := handler.Handlers{
@@ -73,6 +79,9 @@ func main() {
 		Account:       v1.NewAccountHandler(accountUC, currUC),
 		Currency:      v1.NewCurrencyHandler(currUC),
 		ExchangeRate:  v1.NewExchangeRateHandler(erUC, currUC),
+		Transaction:   v1.NewTransactionHandler(transactionUC, accountUC),
+		Attachment:    v1.NewAttachmentHandler(attachmentRepo),
+		LinkType:      v1.NewLinkTypeHandler(linkTypeRepo, txLinkRepo),
 	}
 
 	// Router

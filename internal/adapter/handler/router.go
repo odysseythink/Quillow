@@ -17,6 +17,9 @@ type Handlers struct {
 	Account       *v1.AccountHandler
 	Currency      *v1.CurrencyHandler
 	ExchangeRate  *v1.ExchangeRateHandler
+	Transaction   *v1.TransactionHandler
+	Attachment    *v1.AttachmentHandler
+	LinkType      *v1.LinkTypeHandler
 }
 
 func SetupRouter(
@@ -38,6 +41,10 @@ func SetupRouter(
 	// Public config read
 	api.GET("/configuration", h.Configuration.Index)
 	api.GET("/configuration/:key", h.Configuration.Show)
+
+	// Public link types
+	api.GET("/link-types", h.LinkType.Index)
+	api.GET("/link-types/:id", h.LinkType.Show)
 
 	// Authenticated routes
 	auth := api.Group("")
@@ -77,6 +84,36 @@ func SetupRouter(
 		auth.POST("/exchange-rates", h.ExchangeRate.Store)
 		auth.PUT("/exchange-rates/:id", h.ExchangeRate.UpdateByID)
 		auth.DELETE("/exchange-rates/:id", h.ExchangeRate.DestroyByID)
+
+		// Transactions
+		auth.GET("/transactions", h.Transaction.Index)
+		auth.POST("/transactions", h.Transaction.Store)
+		auth.GET("/transactions/:id", h.Transaction.Show)
+		auth.DELETE("/transactions/:id", h.Transaction.Destroy)
+
+		// Search
+		auth.GET("/search/transactions", h.Transaction.Search)
+		auth.GET("/search/transactions/count", h.Transaction.SearchCount)
+
+		// Attachments
+		auth.GET("/attachments", h.Attachment.Index)
+		auth.POST("/attachments", h.Attachment.Store)
+		auth.GET("/attachments/:id", h.Attachment.Show)
+		auth.DELETE("/attachments/:id", h.Attachment.Destroy)
+
+		// Transaction Links
+		auth.GET("/transaction-links", h.LinkType.ListLinks)
+		auth.POST("/transaction-links", h.LinkType.StoreLink)
+		auth.GET("/transaction-links/:id", h.LinkType.ShowLink)
+		auth.DELETE("/transaction-links/:id", h.LinkType.DestroyLink)
+
+		// Insight
+		auth.GET("/insight/expense/total", h.Transaction.InsightExpense)
+		auth.GET("/insight/income/total", h.Transaction.InsightIncome)
+		auth.GET("/insight/transfer/total", h.Transaction.InsightTransfer)
+
+		// Summary
+		auth.GET("/summary/basic", h.Transaction.Summary)
 	}
 
 	// Admin routes
@@ -94,5 +131,9 @@ func SetupRouter(
 		// Admin-only currency operations
 		admin.POST("/currencies", h.Currency.Store)
 		admin.DELETE("/currencies/:currency_code", h.Currency.Destroy)
+
+		// Admin-only link type operations
+		admin.POST("/link-types", h.LinkType.Store)
+		admin.DELETE("/link-types/:id", h.LinkType.Destroy)
 	}
 }
