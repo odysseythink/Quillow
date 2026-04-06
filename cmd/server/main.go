@@ -6,8 +6,11 @@ import (
 	"github.com/anthropics/firefly-iii-go/internal/adapter/handler"
 	v1 "github.com/anthropics/firefly-iii-go/internal/adapter/handler/v1"
 	"github.com/anthropics/firefly-iii-go/internal/adapter/repository"
+	accountuc "github.com/anthropics/firefly-iii-go/internal/usecase/account"
 	authuc "github.com/anthropics/firefly-iii-go/internal/usecase/auth"
 	configuc "github.com/anthropics/firefly-iii-go/internal/usecase/configuration"
+	currencyuc "github.com/anthropics/firefly-iii-go/internal/usecase/currency"
+	eruc "github.com/anthropics/firefly-iii-go/internal/usecase/exchangerate"
 	prefuc "github.com/anthropics/firefly-iii-go/internal/usecase/preference"
 	useruc "github.com/anthropics/firefly-iii-go/internal/usecase/user"
 	"github.com/anthropics/firefly-iii-go/pkg/config"
@@ -47,12 +50,18 @@ func main() {
 	userRepo := repository.NewUserRepository(db)
 	prefRepo := repository.NewPreferenceRepository(db)
 	configRepo := repository.NewConfigurationRepository(db)
+	accountRepo := repository.NewAccountRepository(db)
+	currencyRepo := repository.NewCurrencyRepository(db)
+	exchangeRateRepo := repository.NewExchangeRateRepository(db)
 
 	// Usecases
 	authUC := authuc.NewUseCase(userRepo, jwtSvc)
 	userUC := useruc.NewUseCase(userRepo)
 	prefUC := prefuc.NewUseCase(prefRepo)
 	configUC := configuc.NewUseCase(configRepo)
+	currUC := currencyuc.NewUseCase(currencyRepo)
+	accountUC := accountuc.NewUseCase(accountRepo, currencyRepo)
+	erUC := eruc.NewUseCase(exchangeRateRepo, currencyRepo)
 
 	// Handlers
 	handlers := handler.Handlers{
@@ -61,6 +70,9 @@ func main() {
 		User:          v1.NewUserHandler(userUC),
 		Configuration: v1.NewConfigurationHandler(configUC),
 		Preference:    v1.NewPreferenceHandler(prefUC),
+		Account:       v1.NewAccountHandler(accountUC, currUC),
+		Currency:      v1.NewCurrencyHandler(currUC),
+		ExchangeRate:  v1.NewExchangeRateHandler(erUC, currUC),
 	}
 
 	// Router
