@@ -1,7 +1,10 @@
 package main
 
 import (
+	"embed"
+	"io/fs"
 	"log"
+	"net/http"
 
 	"github.com/anthropics/firefly-iii-go/internal/adapter/handler"
 	v1 "github.com/anthropics/firefly-iii-go/internal/adapter/handler/v1"
@@ -123,9 +126,36 @@ func main() {
 	r := gin.Default()
 	handler.SetupRouter(r, handlers, jwtSvc, userRepo)
 
+	// Serve embedded frontend (SPA fallback)
+	setupFrontend(r)
+
 	addr := ":" + cfg.Server.Port
 	log.Printf("Firefly III Go server starting on %s", addr)
 	if err := r.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
+}
+
+//go:embed all:frontend
+var frontendFS embed.FS
+
+func setupFrontend(r *gin.Engine) {
+	distFS, err := fs.Sub(frontendFS, "frontend")
+	if err != nil {
+		log.Printf("Warning: frontend not embedded (build with web/dist): %v", err)
+		return
+	}
+	fileServer := http.FileServer(http.FS(distFS))
+	r.NoRoute(gin.WrapH(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		// Try to serve static file first
+		path := req.URL.Path
+		if f, err := distFS.(fs.ReadFileFS).ReadFile(path[1:]); err == nil {
+			_ = f
+			fileServer.ServeHTTP(w, req)
+			return
+		}
+		// SPA fallback: serve index.html for all non-API routes
+		req.URL.Path = "/"
+		fileServer.ServeHTTP(w, req)
+	})))
 }
