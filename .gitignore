@@ -1,0 +1,18 @@
+# Binaries
+firefly-iii-go
+*.exe
+*.test
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Environment
+.env
+
+# Build
+/bin/
+/dist/
+/web/dist/
