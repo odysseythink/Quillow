@@ -1,0 +1,19 @@
+{
+  "auth.login_success": "Login successful",
+  "auth.login_failed": "Invalid email or password",
+  "auth.token_expired": "Token has expired",
+  "auth.token_invalid": "Invalid token",
+  "auth.unauthorized": "Unauthorized",
+  "auth.forbidden": "Forbidden",
+  "validation.required": "The %s field is required",
+  "validation.email": "The %s field must be a valid email",
+  "validation.unique": "The %s has already been taken",
+  "user.not_found": "User not found",
+  "user.created": "User created successfully",
+  "user.updated": "User updated successfully",
+  "user.deleted": "User deleted successfully",
+  "user.cannot_delete_self": "You cannot delete your own account",
+  "config.not_found": "Configuration key not found",
+  "config.not_editable": "This configuration key is not editable",
+  "preference.not_found": "Preference not found"
+}
