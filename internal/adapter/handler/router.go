@@ -20,6 +20,12 @@ type Handlers struct {
 	Transaction   *v1.TransactionHandler
 	Attachment    *v1.AttachmentHandler
 	LinkType      *v1.LinkTypeHandler
+	Budget        *v1.BudgetHandler
+	Bill          *v1.BillHandler
+	Category      *v1.CategoryHandler
+	Tag           *v1.TagHandler
+	PiggyBank     *v1.PiggyBankHandler
+	ObjectGroup   *v1.ObjectGroupHandler
 }
 
 func SetupRouter(
@@ -37,12 +43,8 @@ func SetupRouter(
 	api.POST("/auth/login", h.Auth.Login)
 	api.POST("/auth/refresh", h.Auth.Refresh)
 	api.GET("/about", h.About.About)
-
-	// Public config read
 	api.GET("/configuration", h.Configuration.Index)
 	api.GET("/configuration/:key", h.Configuration.Show)
-
-	// Public link types
 	api.GET("/link-types", h.LinkType.Index)
 	api.GET("/link-types/:id", h.LinkType.Show)
 
@@ -68,6 +70,8 @@ func SetupRouter(
 
 		// Autocomplete
 		auth.GET("/autocomplete/accounts", h.Account.Autocomplete)
+		auth.GET("/autocomplete/categories", h.Category.Autocomplete)
+		auth.GET("/autocomplete/tags", h.Tag.Autocomplete)
 
 		// Currencies
 		auth.GET("/currencies", h.Currency.Index)
@@ -114,6 +118,56 @@ func SetupRouter(
 
 		// Summary
 		auth.GET("/summary/basic", h.Transaction.Summary)
+
+		// Budgets
+		auth.GET("/budgets", h.Budget.Index)
+		auth.POST("/budgets", h.Budget.Store)
+		auth.GET("/budgets/:id", h.Budget.Show)
+		auth.PUT("/budgets/:id", h.Budget.Update)
+		auth.DELETE("/budgets/:id", h.Budget.Destroy)
+		auth.GET("/budgets/:id/limits", h.Budget.ListLimits)
+		auth.POST("/budgets/:id/limits", h.Budget.StoreLimits)
+
+		// Bills / Subscriptions
+		auth.GET("/bills", h.Bill.Index)
+		auth.POST("/bills", h.Bill.Store)
+		auth.GET("/bills/:id", h.Bill.Show)
+		auth.PUT("/bills/:id", h.Bill.Update)
+		auth.DELETE("/bills/:id", h.Bill.Destroy)
+		auth.GET("/subscriptions", h.Bill.Index)
+		auth.POST("/subscriptions", h.Bill.Store)
+		auth.GET("/subscriptions/:id", h.Bill.Show)
+		auth.PUT("/subscriptions/:id", h.Bill.Update)
+		auth.DELETE("/subscriptions/:id", h.Bill.Destroy)
+
+		// Categories
+		auth.GET("/categories", h.Category.Index)
+		auth.POST("/categories", h.Category.Store)
+		auth.GET("/categories/:id", h.Category.Show)
+		auth.PUT("/categories/:id", h.Category.Update)
+		auth.DELETE("/categories/:id", h.Category.Destroy)
+
+		// Tags
+		auth.GET("/tags", h.Tag.Index)
+		auth.POST("/tags", h.Tag.Store)
+		auth.GET("/tags/:id", h.Tag.Show)
+		auth.PUT("/tags/:id", h.Tag.Update)
+		auth.DELETE("/tags/:id", h.Tag.Destroy)
+
+		// Piggy Banks
+		auth.GET("/piggy-banks", h.PiggyBank.Index)
+		auth.POST("/piggy-banks", h.PiggyBank.Store)
+		auth.GET("/piggy-banks/:id", h.PiggyBank.Show)
+		auth.PUT("/piggy-banks/:id", h.PiggyBank.Update)
+		auth.DELETE("/piggy-banks/:id", h.PiggyBank.Destroy)
+		auth.GET("/piggy-banks/:id/events", h.PiggyBank.ListEvents)
+
+		// Object Groups
+		auth.GET("/object-groups", h.ObjectGroup.Index)
+		auth.POST("/object-groups", h.ObjectGroup.Store)
+		auth.GET("/object-groups/:id", h.ObjectGroup.Show)
+		auth.PUT("/object-groups/:id", h.ObjectGroup.Update)
+		auth.DELETE("/object-groups/:id", h.ObjectGroup.Destroy)
 	}
 
 	// Admin routes
@@ -125,14 +179,9 @@ func SetupRouter(
 		admin.GET("/users/:id", h.User.Show)
 		admin.PUT("/users/:id", h.User.Update)
 		admin.DELETE("/users/:id", h.User.Destroy)
-
 		admin.PUT("/configuration/:key", h.Configuration.Update)
-
-		// Admin-only currency operations
 		admin.POST("/currencies", h.Currency.Store)
 		admin.DELETE("/currencies/:currency_code", h.Currency.Destroy)
-
-		// Admin-only link type operations
 		admin.POST("/link-types", h.LinkType.Store)
 		admin.DELETE("/link-types/:id", h.LinkType.Destroy)
 	}
