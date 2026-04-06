@@ -17,9 +17,12 @@ import (
 	objectgroupuc "github.com/anthropics/firefly-iii-go/internal/usecase/objectgroup"
 	piggybankuc "github.com/anthropics/firefly-iii-go/internal/usecase/piggybank"
 	prefuc "github.com/anthropics/firefly-iii-go/internal/usecase/preference"
+	recurrenceuc "github.com/anthropics/firefly-iii-go/internal/usecase/recurrence"
+	ruleuc "github.com/anthropics/firefly-iii-go/internal/usecase/rule"
 	taguc "github.com/anthropics/firefly-iii-go/internal/usecase/tag"
 	txuc "github.com/anthropics/firefly-iii-go/internal/usecase/transaction"
 	useruc "github.com/anthropics/firefly-iii-go/internal/usecase/user"
+	webhookuc "github.com/anthropics/firefly-iii-go/internal/usecase/webhook"
 	"github.com/anthropics/firefly-iii-go/pkg/config"
 	"github.com/anthropics/firefly-iii-go/pkg/database"
 	"github.com/anthropics/firefly-iii-go/pkg/i18n"
@@ -67,6 +70,10 @@ func main() {
 	tagRepo := repository.NewTagRepository(db)
 	piggyBankRepo := repository.NewPiggyBankRepository(db)
 	objectGroupRepo := repository.NewObjectGroupRepository(db)
+	ruleGroupRepo := repository.NewRuleGroupRepository(db)
+	ruleRepo := repository.NewRuleRepository(db)
+	recurrenceRepo := repository.NewRecurrenceRepository(db)
+	webhookRepo := repository.NewWebhookRepository(db)
 
 	// Usecases
 	authUC := authuc.NewUseCase(userRepo, jwtSvc)
@@ -83,6 +90,9 @@ func main() {
 	tagUC := taguc.NewUseCase(tagRepo)
 	piggyBankUC := piggybankuc.NewUseCase(piggyBankRepo)
 	objectGroupUC := objectgroupuc.NewUseCase(objectGroupRepo)
+	ruleUC := ruleuc.NewUseCase(ruleGroupRepo, ruleRepo)
+	recurrenceUC := recurrenceuc.NewUseCase(recurrenceRepo)
+	webhookUC := webhookuc.NewUseCase(webhookRepo)
 
 	// Handlers
 	handlers := handler.Handlers{
@@ -103,6 +113,10 @@ func main() {
 		Tag:           v1.NewTagHandler(tagUC),
 		PiggyBank:     v1.NewPiggyBankHandler(piggyBankUC),
 		ObjectGroup:   v1.NewObjectGroupHandler(objectGroupUC),
+		Rule:          v1.NewRuleHandler(ruleUC),
+		Recurrence:    v1.NewRecurrenceHandler(recurrenceUC),
+		Webhook:       v1.NewWebhookHandler(webhookUC),
+		Cron:          v1.NewCronHandler(""),
 	}
 
 	gin.SetMode(cfg.Server.Mode)

@@ -26,6 +26,10 @@ type Handlers struct {
 	Tag           *v1.TagHandler
 	PiggyBank     *v1.PiggyBankHandler
 	ObjectGroup   *v1.ObjectGroupHandler
+	Rule          *v1.RuleHandler
+	Recurrence    *v1.RecurrenceHandler
+	Webhook       *v1.WebhookHandler
+	Cron          *v1.CronHandler
 }
 
 func SetupRouter(
@@ -168,9 +172,43 @@ func SetupRouter(
 		auth.GET("/object-groups/:id", h.ObjectGroup.Show)
 		auth.PUT("/object-groups/:id", h.ObjectGroup.Update)
 		auth.DELETE("/object-groups/:id", h.ObjectGroup.Destroy)
+
+		// Rules
+		auth.GET("/rules", h.Rule.RuleIndex)
+		auth.POST("/rules", h.Rule.RuleStore)
+		auth.GET("/rules/:id", h.Rule.RuleShow)
+		auth.PUT("/rules/:id", h.Rule.RuleUpdate)
+		auth.DELETE("/rules/:id", h.Rule.RuleDestroy)
+
+		// Rule Groups
+		auth.GET("/rule-groups", h.Rule.RuleGroupIndex)
+		auth.POST("/rule-groups", h.Rule.RuleGroupStore)
+		auth.GET("/rule-groups/:id", h.Rule.RuleGroupShow)
+		auth.PUT("/rule-groups/:id", h.Rule.RuleGroupUpdate)
+		auth.DELETE("/rule-groups/:id", h.Rule.RuleGroupDestroy)
+		auth.GET("/rule-groups/:id/rules", h.Rule.RuleGroupListRules)
+
+		// Recurrences
+		auth.GET("/recurrences", h.Recurrence.Index)
+		auth.POST("/recurrences", h.Recurrence.Store)
+		auth.GET("/recurrences/:id", h.Recurrence.Show)
+		auth.PUT("/recurrences/:id", h.Recurrence.Update)
+		auth.DELETE("/recurrences/:id", h.Recurrence.Destroy)
+
+		// Webhooks
+		auth.GET("/webhooks", h.Webhook.Index)
+		auth.POST("/webhooks", h.Webhook.Store)
+		auth.GET("/webhooks/:id", h.Webhook.Show)
+		auth.PUT("/webhooks/:id", h.Webhook.Update)
+		auth.DELETE("/webhooks/:id", h.Webhook.Destroy)
+		auth.GET("/webhooks/:id/messages", h.Webhook.ListMessages)
 	}
 
+	// Cron (token-based auth, not JWT)
+	api.GET("/cron/:cliToken", h.Cron.Run)
+
 	// Admin routes
+	// Note: auth group was closed above, admin extends it
 	admin := auth.Group("")
 	admin.Use(middleware.Admin(userRepo))
 	{
