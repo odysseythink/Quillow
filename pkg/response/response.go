@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/pagination"
 	"github.com/gin-gonic/gin"
 )
 

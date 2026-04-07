@@ -3,8 +3,8 @@ package objectgroup
 import (
 	"context"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/internal/port"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/internal/port"
 )
 
 type UseCase struct {

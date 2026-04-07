@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/transformer"
-	accountuc "github.com/anthropics/firefly-iii-go/internal/usecase/account"
-	currencyuc "github.com/anthropics/firefly-iii-go/internal/usecase/currency"
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/adapter/transformer"
+	accountuc "github.com/anthropics/quillow/internal/usecase/account"
+	currencyuc "github.com/anthropics/quillow/internal/usecase/currency"
+	"github.com/anthropics/quillow/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -78,18 +78,34 @@ func (h *AccountHandler) Show(c *gin.Context) {
 	response.JSONApi(c, http.StatusOK, response.Single(resource.Type, resource.ID, resource.Attributes))
 }
 
+type flexUint uint
+
+func (f *flexUint) UnmarshalJSON(data []byte) error {
+	s := strings.Trim(string(data), "\"")
+	if s == "" || s == "null" {
+		*f = 0
+		return nil
+	}
+	v, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		return err
+	}
+	*f = flexUint(v)
+	return nil
+}
+
 type storeAccountRequest struct {
-	Name           string `json:"name" binding:"required"`
-	Type           string `json:"type" binding:"required"`
-	IBAN           string `json:"iban"`
-	AccountNumber  string `json:"account_number"`
-	VirtualBalance string `json:"virtual_balance"`
-	Active         *bool  `json:"active"`
-	Order          int    `json:"order"`
-	AccountRole    string `json:"account_role"`
-	CurrencyID     uint   `json:"currency_id"`
-	CurrencyCode   string `json:"currency_code"`
-	Notes          string `json:"notes"`
+	Name           string   `json:"name" binding:"required"`
+	Type           string   `json:"type" binding:"required"`
+	IBAN           string   `json:"iban"`
+	AccountNumber  string   `json:"account_number"`
+	VirtualBalance string   `json:"virtual_balance"`
+	Active         *bool    `json:"active"`
+	Order          int      `json:"order"`
+	AccountRole    string   `json:"account_role"`
+	CurrencyID     flexUint `json:"currency_id"`
+	CurrencyCode   string   `json:"currency_code"`
+	Notes          string   `json:"notes"`
 }
 
 func (h *AccountHandler) Store(c *gin.Context) {
@@ -105,7 +121,7 @@ func (h *AccountHandler) Store(c *gin.Context) {
 	}
 
 	// Resolve currency
-	currencyID := req.CurrencyID
+	currencyID := uint(req.CurrencyID)
 	if currencyID == 0 && req.CurrencyCode != "" {
 		curr, err := h.currUC.GetByCode(c.Request.Context(), req.CurrencyCode)
 		if err == nil {

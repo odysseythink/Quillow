@@ -5,12 +5,12 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/transformer"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	currencyuc "github.com/anthropics/firefly-iii-go/internal/usecase/currency"
-	eruc "github.com/anthropics/firefly-iii-go/internal/usecase/exchangerate"
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/adapter/transformer"
+	"github.com/anthropics/quillow/internal/entity"
+	currencyuc "github.com/anthropics/quillow/internal/usecase/currency"
+	eruc "github.com/anthropics/quillow/internal/usecase/exchangerate"
+	"github.com/anthropics/quillow/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

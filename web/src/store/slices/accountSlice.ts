@@ -34,7 +34,7 @@ const accountSlice = createSlice({
       .addCase(fetchAccounts.pending, (state) => { state.loading = true; })
       .addCase(fetchAccounts.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.data.map((r) => ({ id: r.id, ...r.attributes }));
+        state.items = action.payload.data.map((r) => ({ ...r.attributes, id: r.id }));
         state.pagination = action.payload.meta.pagination;
       })
       .addCase(fetchAccounts.rejected, (state, action) => {

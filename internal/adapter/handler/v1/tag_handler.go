@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/transformer"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	taguc "github.com/anthropics/firefly-iii-go/internal/usecase/tag"
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/adapter/transformer"
+	"github.com/anthropics/quillow/internal/entity"
+	taguc "github.com/anthropics/quillow/internal/usecase/tag"
+	"github.com/anthropics/quillow/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

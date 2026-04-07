@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/anthropics/firefly-iii-go/internal/port"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/port"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

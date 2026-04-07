@@ -6,30 +6,33 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/handler"
-	v1 "github.com/anthropics/firefly-iii-go/internal/adapter/handler/v1"
-	"github.com/anthropics/firefly-iii-go/internal/adapter/repository"
-	accountuc "github.com/anthropics/firefly-iii-go/internal/usecase/account"
-	authuc "github.com/anthropics/firefly-iii-go/internal/usecase/auth"
-	billuc "github.com/anthropics/firefly-iii-go/internal/usecase/bill"
-	budgetuc "github.com/anthropics/firefly-iii-go/internal/usecase/budget"
-	categoryuc "github.com/anthropics/firefly-iii-go/internal/usecase/category"
-	configuc "github.com/anthropics/firefly-iii-go/internal/usecase/configuration"
-	currencyuc "github.com/anthropics/firefly-iii-go/internal/usecase/currency"
-	eruc "github.com/anthropics/firefly-iii-go/internal/usecase/exchangerate"
-	objectgroupuc "github.com/anthropics/firefly-iii-go/internal/usecase/objectgroup"
-	piggybankuc "github.com/anthropics/firefly-iii-go/internal/usecase/piggybank"
-	prefuc "github.com/anthropics/firefly-iii-go/internal/usecase/preference"
-	recurrenceuc "github.com/anthropics/firefly-iii-go/internal/usecase/recurrence"
-	ruleuc "github.com/anthropics/firefly-iii-go/internal/usecase/rule"
-	taguc "github.com/anthropics/firefly-iii-go/internal/usecase/tag"
-	txuc "github.com/anthropics/firefly-iii-go/internal/usecase/transaction"
-	useruc "github.com/anthropics/firefly-iii-go/internal/usecase/user"
-	webhookuc "github.com/anthropics/firefly-iii-go/internal/usecase/webhook"
-	"github.com/anthropics/firefly-iii-go/pkg/config"
-	"github.com/anthropics/firefly-iii-go/pkg/database"
-	"github.com/anthropics/firefly-iii-go/pkg/i18n"
-	"github.com/anthropics/firefly-iii-go/pkg/jwt"
+	"github.com/anthropics/quillow/internal/adapter/handler"
+	v1 "github.com/anthropics/quillow/internal/adapter/handler/v1"
+	"github.com/anthropics/quillow/internal/adapter/repository"
+	accountuc "github.com/anthropics/quillow/internal/usecase/account"
+	authuc "github.com/anthropics/quillow/internal/usecase/auth"
+	billuc "github.com/anthropics/quillow/internal/usecase/bill"
+	budgetuc "github.com/anthropics/quillow/internal/usecase/budget"
+	categoryuc "github.com/anthropics/quillow/internal/usecase/category"
+	configuc "github.com/anthropics/quillow/internal/usecase/configuration"
+	currencyuc "github.com/anthropics/quillow/internal/usecase/currency"
+	eruc "github.com/anthropics/quillow/internal/usecase/exchangerate"
+	objectgroupuc "github.com/anthropics/quillow/internal/usecase/objectgroup"
+	piggybankuc "github.com/anthropics/quillow/internal/usecase/piggybank"
+	prefuc "github.com/anthropics/quillow/internal/usecase/preference"
+	recurrenceuc "github.com/anthropics/quillow/internal/usecase/recurrence"
+	ruleuc "github.com/anthropics/quillow/internal/usecase/rule"
+	taguc "github.com/anthropics/quillow/internal/usecase/tag"
+	txuc "github.com/anthropics/quillow/internal/usecase/transaction"
+	useruc "github.com/anthropics/quillow/internal/usecase/user"
+	webhookuc "github.com/anthropics/quillow/internal/usecase/webhook"
+	aiuc "github.com/anthropics/quillow/internal/usecase/ai"
+	importeruc "github.com/anthropics/quillow/internal/usecase/importer"
+	"github.com/anthropics/quillow/pkg/ai"
+	"github.com/anthropics/quillow/pkg/config"
+	"github.com/anthropics/quillow/pkg/database"
+	"github.com/anthropics/quillow/pkg/i18n"
+	"github.com/anthropics/quillow/pkg/jwt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,10 +41,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
+	log.Printf("----cfg=%#v\n", cfg)
 
 	db, err := database.Connect(cfg.Database)
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	// Auto-migrate database tables
+	if err := database.AutoMigrate(db); err != nil {
+		log.Fatalf("Failed to migrate database: %v", err)
+	}
+
+	// Seed reference data
+	if err := database.Seed(db); err != nil {
+		log.Fatalf("Failed to seed database: %v", err)
 	}
 
 	i18nSvc, err := i18n.NewService("locales")
@@ -77,6 +91,18 @@ func main() {
 	ruleRepo := repository.NewRuleRepository(db)
 	recurrenceRepo := repository.NewRecurrenceRepository(db)
 	webhookRepo := repository.NewWebhookRepository(db)
+	patternRepo := repository.NewClassificationPatternRepository(db)
+
+	// AI Service
+	var aiProvider ai.Provider
+	switch cfg.AI.Provider {
+	case "claude":
+		aiProvider = ai.NewClaudeProvider(cfg.AI.APIKey, cfg.AI.APIEndpoint)
+	case "openai":
+		aiProvider = ai.NewOpenAIProvider(cfg.AI.APIKey, cfg.AI.APIEndpoint)
+	}
+	aiSvc := ai.NewService(aiProvider)
+	queryRegistry := ai.NewQueryRegistry(db)
 
 	// Usecases
 	authUC := authuc.NewUseCase(userRepo, jwtSvc)
@@ -96,6 +122,8 @@ func main() {
 	ruleUC := ruleuc.NewUseCase(ruleGroupRepo, ruleRepo)
 	recurrenceUC := recurrenceuc.NewUseCase(recurrenceRepo)
 	webhookUC := webhookuc.NewUseCase(webhookRepo)
+	aiUC := aiuc.NewUseCase(aiSvc, patternRepo, categoryRepo, queryRegistry)
+	importUC := importeruc.NewUseCase()
 
 	// Handlers
 	handlers := handler.Handlers{
@@ -119,6 +147,9 @@ func main() {
 		Rule:          v1.NewRuleHandler(ruleUC),
 		Recurrence:    v1.NewRecurrenceHandler(recurrenceUC),
 		Webhook:       v1.NewWebhookHandler(webhookUC),
+		Profile:       v1.NewProfileHandler(userUC),
+		AI:            v1.NewAIHandler(aiUC),
+		Import:        v1.NewImportHandler(importUC),
 		Cron:          v1.NewCronHandler(""),
 	}
 
@@ -130,7 +161,7 @@ func main() {
 	setupFrontend(r)
 
 	addr := ":" + cfg.Server.Port
-	log.Printf("Firefly III Go server starting on %s", addr)
+	log.Printf("Quillow server starting on %s", addr)
 	if err := r.Run(addr); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}

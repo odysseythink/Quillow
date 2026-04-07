@@ -16,6 +16,9 @@ import RuleList from './pages/rules/RuleList';
 import RecurrenceList from './pages/recurring/RecurrenceList';
 import CurrencyList from './pages/currencies/CurrencyList';
 import WebhookList from './pages/webhooks/WebhookList';
+import Admin from './pages/admin/Admin';
+import Profile from './pages/profile/Profile';
+import ImportPage from './pages/import/Import';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
@@ -40,6 +43,9 @@ const App: React.FC = () => (
           <Route path="recurring" element={<RecurrenceList />} />
           <Route path="currencies" element={<CurrencyList />} />
           <Route path="webhooks" element={<WebhookList />} />
+          <Route path="admin" element={<Admin />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="import" element={<ImportPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

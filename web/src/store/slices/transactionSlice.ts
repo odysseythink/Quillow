@@ -34,7 +34,7 @@ const transactionSlice = createSlice({
       .addCase(fetchTransactions.pending, (state) => { state.loading = true; })
       .addCase(fetchTransactions.fulfilled, (state, action) => {
         state.loading = false;
-        state.items = action.payload.data.map((r) => ({ id: r.id, ...r.attributes }));
+        state.items = action.payload.data.map((r) => ({ ...r.attributes, id: r.id }));
         state.pagination = action.payload.meta.pagination;
       })
       .addCase(fetchTransactions.rejected, (state, action) => {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/repository/model"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
+	"github.com/anthropics/quillow/internal/adapter/repository/model"
+	"github.com/anthropics/quillow/internal/entity"
 	"gorm.io/gorm"
 )
 

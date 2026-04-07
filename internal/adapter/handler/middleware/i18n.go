@@ -3,7 +3,7 @@ package middleware
 import (
 	"strings"
 
-	i18npkg "github.com/anthropics/firefly-iii-go/pkg/i18n"
+	i18npkg "github.com/anthropics/quillow/pkg/i18n"
 	"github.com/gin-gonic/gin"
 )
 

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/repository/model"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/internal/port"
+	"github.com/anthropics/quillow/internal/adapter/repository/model"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/internal/port"
 	"gorm.io/gorm"
 )
 
@@ -191,7 +191,7 @@ func (r *TransactionRepository) GetJournalNotes(ctx context.Context, journalID u
 }
 
 func (r *TransactionRepository) SetJournalNotes(ctx context.Context, journalID uint, text string) error {
-	noteableType := "FireflyIII\\Models\\TransactionJournal"
+	noteableType := "Quillow\\Models\\TransactionJournal"
 	var existing model.NoteModel
 	err := r.db.WithContext(ctx).Where("noteable_id = ? AND noteable_type = ?", journalID, noteableType).First(&existing).Error
 	if err != nil {

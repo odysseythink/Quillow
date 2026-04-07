@@ -3,8 +3,8 @@ package middleware
 import (
 	"strings"
 
-	"github.com/anthropics/firefly-iii-go/pkg/jwt"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/pkg/jwt"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

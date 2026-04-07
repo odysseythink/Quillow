@@ -3,7 +3,7 @@ package response
 import (
 	"testing"
 
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/pagination"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"github.com/anthropics/firefly-iii-go/internal/adapter/handler/middleware"
-	v1 "github.com/anthropics/firefly-iii-go/internal/adapter/handler/v1"
-	"github.com/anthropics/firefly-iii-go/internal/port"
-	"github.com/anthropics/firefly-iii-go/pkg/jwt"
+	"github.com/anthropics/quillow/internal/adapter/handler/middleware"
+	v1 "github.com/anthropics/quillow/internal/adapter/handler/v1"
+	"github.com/anthropics/quillow/internal/port"
+	"github.com/anthropics/quillow/pkg/jwt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,6 +29,9 @@ type Handlers struct {
 	Rule          *v1.RuleHandler
 	Recurrence    *v1.RecurrenceHandler
 	Webhook       *v1.WebhookHandler
+	Profile       *v1.ProfileHandler
+	AI            *v1.AIHandler
+	Import        *v1.ImportHandler
 	Cron          *v1.CronHandler
 }
 
@@ -58,6 +61,11 @@ func SetupRouter(
 	{
 		auth.POST("/auth/logout", h.Auth.Logout)
 		auth.GET("/about/user", h.About.User)
+
+		// Profile (current user)
+		auth.GET("/profile", h.Profile.Show)
+		auth.POST("/profile/change-password", h.Profile.ChangePassword)
+		auth.POST("/profile/change-email", h.Profile.ChangeEmail)
 
 		// Preferences
 		auth.GET("/preferences", h.Preference.Index)
@@ -202,6 +210,17 @@ func SetupRouter(
 		auth.PUT("/webhooks/:id", h.Webhook.Update)
 		auth.DELETE("/webhooks/:id", h.Webhook.Destroy)
 		auth.GET("/webhooks/:id/messages", h.Webhook.ListMessages)
+
+		// AI
+		auth.POST("/ai/suggest", h.AI.Suggest)
+		auth.POST("/ai/classify-batch", h.AI.ClassifyBatch)
+		auth.POST("/ai/learn", h.AI.Learn)
+		auth.POST("/ai/chat", h.AI.Chat)
+		auth.POST("/ai/insight", h.AI.Insight)
+
+		// Import
+		auth.POST("/import/preview", h.Import.Preview)
+		auth.POST("/import/confirm", h.Import.Confirm)
 	}
 
 	// Cron (token-based auth, not JWT)

@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/internal/port"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/internal/port"
 )
 
 // TriggerFunc checks if a trigger condition matches.

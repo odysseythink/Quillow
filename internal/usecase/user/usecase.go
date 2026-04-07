@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/internal/port"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/internal/port"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -55,6 +55,37 @@ func (uc *UseCase) Update(ctx context.Context, id uint, email string, blocked bo
 	user.Email = email
 	user.Blocked = blocked
 	user.BlockedCode = blockedCode
+	if err := uc.repo.Update(ctx, user); err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (uc *UseCase) ChangePassword(ctx context.Context, id uint, currentPassword, newPassword string) error {
+	user, err := uc.repo.FindByID(ctx, id)
+	if err != nil {
+		return err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(currentPassword)); err != nil {
+		return fmt.Errorf("current password is incorrect")
+	}
+	hashed, err := bcrypt.GenerateFromPassword([]byte(newPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+	user.Password = string(hashed)
+	return uc.repo.Update(ctx, user)
+}
+
+func (uc *UseCase) ChangeEmail(ctx context.Context, id uint, password, newEmail string) (*entity.User, error) {
+	user, err := uc.repo.FindByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
+		return nil, fmt.Errorf("password is incorrect")
+	}
+	user.Email = newEmail
 	if err := uc.repo.Update(ctx, user); err != nil {
 		return nil, err
 	}

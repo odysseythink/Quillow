@@ -1,4 +1,4 @@
-module github.com/anthropics/firefly-iii-go
+module github.com/anthropics/quillow
 
 go 1.25.7
 

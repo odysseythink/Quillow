@@ -4,10 +4,10 @@ import (
 	"net/http"
 	"runtime"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/transformer"
-	useruc "github.com/anthropics/firefly-iii-go/internal/usecase/user"
-	"github.com/anthropics/firefly-iii-go/pkg/config"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/adapter/transformer"
+	useruc "github.com/anthropics/quillow/internal/usecase/user"
+	"github.com/anthropics/quillow/pkg/config"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

@@ -3,8 +3,8 @@ package transformer
 import (
 	"fmt"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/pkg/response"
 )
 
 func TransformCurrency(curr *entity.TransactionCurrency, isPrimary bool) response.Resource {

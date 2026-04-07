@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/repository/model"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
+	"github.com/anthropics/quillow/internal/adapter/repository/model"
+	"github.com/anthropics/quillow/internal/entity"
 	"gorm.io/gorm"
 )
 
@@ -108,7 +108,7 @@ func (r *CategoryRepository) GetNotes(ctx context.Context, categoryID uint) (str
 
 func (r *CategoryRepository) SetNotes(ctx context.Context, categoryID uint, text string) error {
 	var existing model.NoteModel
-	noteableType := "FireflyIII\\Models\\Category"
+	noteableType := "Quillow\\Models\\Category"
 	err := r.db.WithContext(ctx).Where("noteable_id = ? AND noteable_type = ?", categoryID, noteableType).First(&existing).Error
 	if err != nil {
 		return r.db.WithContext(ctx).Create(&model.NoteModel{

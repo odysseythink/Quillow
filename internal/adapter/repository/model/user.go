@@ -66,7 +66,7 @@ type PersonalAccessTokenModel struct {
 	TokenableID   uint       `gorm:"column:tokenable_id"`
 	TokenableType string     `gorm:"column:tokenable_type"`
 	Name          string     `gorm:"column:name"`
-	Token         string     `gorm:"column:token;uniqueIndex"`
+	Token         string     `gorm:"column:token;type:varchar(64);uniqueIndex"`
 	Abilities     *string    `gorm:"column:abilities"`
 	LastUsedAt    *time.Time `gorm:"column:last_used_at"`
 	CreatedAt     time.Time  `gorm:"column:created_at"`

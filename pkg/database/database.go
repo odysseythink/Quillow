@@ -2,8 +2,9 @@ package database
 
 import (
 	"fmt"
+	"log"
 
-	"github.com/anthropics/firefly-iii-go/pkg/config"
+	"github.com/anthropics/quillow/pkg/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -13,11 +14,12 @@ import (
 
 func Connect(cfg config.DatabaseConfig) (*gorm.DB, error) {
 	var dialector gorm.Dialector
-
+	log.Printf("------cfg=%s\n", cfg)
 	switch cfg.Driver {
 	case "mysql":
 		dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 			cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Name)
+		log.Printf("------dfn=%s\n", dsn)
 		dialector = mysql.Open(dsn)
 	case "pgsql":
 		dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",

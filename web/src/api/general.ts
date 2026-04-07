@@ -23,10 +23,23 @@ export const createPiggyBank = (data: any) => client.post('/piggy-banks', data);
 export const deletePiggyBank = (id: string) => client.delete(`/piggy-banks/${id}`);
 
 export const getCurrencies = (page = 1, limit = 50) => client.get('/currencies', { params: { page, limit } });
+export const createCurrency = (data: any) => client.post('/currencies', data);
+
 export const getRules = (page = 1, limit = 50) => client.get('/rules', { params: { page, limit } });
 export const getRuleGroups = (page = 1, limit = 50) => client.get('/rule-groups', { params: { page, limit } });
+export const createRule = (data: any) => client.post('/rules', data);
+export const createRuleGroup = (data: any) => client.post('/rule-groups', data);
+
 export const getWebhooks = (page = 1, limit = 50) => client.get('/webhooks', { params: { page, limit } });
+export const createWebhook = (data: any) => client.post('/webhooks', data);
+
 export const getRecurrences = (page = 1, limit = 50) => client.get('/recurrences', { params: { page, limit } });
+export const createRecurrence = (data: any) => client.post('/recurrences', data);
 
 export const getAbout = () => client.get('/about');
 export const getPreferences = () => client.get('/preferences');
+
+// AI
+export const aiSuggest = (description: string) => client.post('/ai/suggest', { description });
+export const aiClassifyBatch = (transactionIds: number[]) => client.post('/ai/classify-batch', { transaction_ids: transactionIds });
+export const aiLearn = (pattern: string, categoryId: number, tagIds?: number[]) => client.post('/ai/learn', { pattern, category_id: categoryId, tag_ids: tagIds || [] });

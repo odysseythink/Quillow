@@ -2,12 +2,14 @@ import React from 'react';
 import { Form, Input, Button, Card, Typography, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { login } from '../../store/slices/authSlice';
 
 const { Title } = Typography;
 
 const Login: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { loading, error } = useAppSelector((state) => state.auth);
@@ -17,23 +19,23 @@ const Login: React.FC = () => {
     if (login.fulfilled.match(result)) {
       navigate('/');
     } else {
-      message.error(error || 'Login failed');
+      message.error(error || t('login'));
     }
   };
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', background: '#f0f2f5' }}>
       <Card style={{ width: 400 }}>
-        <Title level={3} style={{ textAlign: 'center', marginBottom: 32 }}>Firefly III</Title>
+        <Title level={3} style={{ textAlign: 'center', marginBottom: 32 }}>Quillow</Title>
         <Form onFinish={onFinish} size="large">
-          <Form.Item name="email" rules={[{ required: true, type: 'email', message: 'Please enter your email' }]}>
-            <Input prefix={<UserOutlined />} placeholder="Email" />
+          <Form.Item name="email" rules={[{ required: true, type: 'email', message: t('invalid_email') }]}>
+            <Input prefix={<UserOutlined />} placeholder={t('email')} />
           </Form.Item>
-          <Form.Item name="password" rules={[{ required: true, message: 'Please enter your password' }]}>
-            <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+          <Form.Item name="password" rules={[{ required: true, message: t('required') }]}>
+            <Input.Password prefix={<LockOutlined />} placeholder={t('current_password')} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block>Log in</Button>
+            <Button type="primary" htmlType="submit" loading={loading} block>{t('login')}</Button>
           </Form.Item>
         </Form>
       </Card>

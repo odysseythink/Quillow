@@ -3,8 +3,8 @@ package v1
 import (
 	"net/http"
 
-	configuc "github.com/anthropics/firefly-iii-go/internal/usecase/configuration"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	configuc "github.com/anthropics/quillow/internal/usecase/configuration"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

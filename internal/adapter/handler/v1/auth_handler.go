@@ -3,8 +3,8 @@ package v1
 import (
 	"net/http"
 
-	authuc "github.com/anthropics/firefly-iii-go/internal/usecase/auth"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	authuc "github.com/anthropics/quillow/internal/usecase/auth"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

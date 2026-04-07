@@ -3,8 +3,8 @@ package transformer
 import (
 	"fmt"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/pkg/response"
 )
 
 func TransformRecurrence(r *entity.Recurrence, reps []entity.RecurrenceRepetition, txns []entity.RecurrenceTransaction) response.Resource {

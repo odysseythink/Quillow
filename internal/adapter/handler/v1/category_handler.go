@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/transformer"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	categoryuc "github.com/anthropics/firefly-iii-go/internal/usecase/category"
-	"github.com/anthropics/firefly-iii-go/pkg/pagination"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/adapter/transformer"
+	"github.com/anthropics/quillow/internal/entity"
+	categoryuc "github.com/anthropics/quillow/internal/usecase/category"
+	"github.com/anthropics/quillow/pkg/pagination"
+	"github.com/anthropics/quillow/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 

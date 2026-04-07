@@ -3,7 +3,7 @@ package port
 import (
 	"context"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
+	"github.com/anthropics/quillow/internal/entity"
 )
 
 type PiggyBankRepository interface {

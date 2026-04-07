@@ -1,6 +1,6 @@
 .PHONY: build build-frontend build-backend run dev test lint clean
 
-APP_NAME=firefly-iii-go
+APP_NAME=quillow
 BUILD_DIR=bin
 
 build: build-frontend build-backend

@@ -4,8 +4,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/anthropics/firefly-iii-go/internal/adapter/repository/model"
-	"github.com/anthropics/firefly-iii-go/internal/entity"
+	"github.com/anthropics/quillow/internal/adapter/repository/model"
+	"github.com/anthropics/quillow/internal/entity"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlite"
@@ -27,7 +27,7 @@ func TestAttachmentRepo_CreateAndFind(t *testing.T) {
 	att := &entity.Attachment{
 		UserID: 1, UserGroupID: 1,
 		AttachableID:   100,
-		AttachableType: "FireflyIII\\Models\\TransactionJournal",
+		AttachableType: "Quillow\\Models\\TransactionJournal",
 		Filename:       "receipt.pdf",
 		Mime:           "application/pdf",
 		Size:           1024,
@@ -46,9 +46,9 @@ func TestAttachmentRepo_ListByAttachable(t *testing.T) {
 	repo := NewAttachmentRepository(db)
 	ctx := context.Background()
 
-	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 1, AttachableType: "FireflyIII\\Models\\TransactionJournal", Filename: "a.pdf", Mime: "application/pdf", Uploaded: true})
-	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 1, AttachableType: "FireflyIII\\Models\\TransactionJournal", Filename: "b.pdf", Mime: "application/pdf", Uploaded: true})
-	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 2, AttachableType: "FireflyIII\\Models\\Bill", Filename: "c.pdf", Mime: "application/pdf", Uploaded: true})
+	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 1, AttachableType: "Quillow\\Models\\TransactionJournal", Filename: "a.pdf", Mime: "application/pdf", Uploaded: true})
+	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 1, AttachableType: "Quillow\\Models\\TransactionJournal", Filename: "b.pdf", Mime: "application/pdf", Uploaded: true})
+	repo.Create(ctx, &entity.Attachment{UserID: 1, UserGroupID: 1, AttachableID: 2, AttachableType: "Quillow\\Models\\Bill", Filename: "c.pdf", Mime: "application/pdf", Uploaded: true})
 
 	atts, err := repo.ListByAttachable(ctx, "TransactionJournal", 1)
 	require.NoError(t, err)

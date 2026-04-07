@@ -9,6 +9,14 @@ type Config struct {
 	Database DatabaseConfig
 	JWT      JWTConfig
 	App      AppConfig
+	AI       AIConfig
+}
+
+type AIConfig struct {
+	Provider     string
+	APIKey       string
+	APIEndpoint  string
+	AutoClassify bool
 }
 
 type ServerConfig struct {
@@ -56,6 +64,8 @@ func Load() (*Config, error) {
 	viper.SetDefault("DEFAULT_LOCALE", "en_US")
 	viper.SetDefault("APP_ENV", "production")
 	viper.SetDefault("APP_URL", "http://localhost:8080")
+	viper.SetDefault("AI_PROVIDER", "disabled")
+	viper.SetDefault("AI_AUTO_CLASSIFY", false)
 
 	_ = viper.ReadInConfig()
 
@@ -77,6 +87,11 @@ func Load() (*Config, error) {
 	cfg.App.SiteOwner = viper.GetString("SITE_OWNER")
 	cfg.App.AppEnv = viper.GetString("APP_ENV")
 	cfg.App.AppURL = viper.GetString("APP_URL")
+
+	cfg.AI.Provider = viper.GetString("AI_PROVIDER")
+	cfg.AI.APIKey = viper.GetString("AI_API_KEY")
+	cfg.AI.APIEndpoint = viper.GetString("AI_API_ENDPOINT")
+	cfg.AI.AutoClassify = viper.GetBool("AI_AUTO_CLASSIFY")
 
 	return cfg, nil
 }

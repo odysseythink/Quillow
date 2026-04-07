@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/anthropics/firefly-iii-go/internal/entity"
-	"github.com/anthropics/firefly-iii-go/pkg/response"
+	"github.com/anthropics/quillow/internal/entity"
+	"github.com/anthropics/quillow/pkg/response"
 )
 
 func TransformPreference(pref *entity.Preference) response.Resource {

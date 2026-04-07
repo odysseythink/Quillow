@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/anthropics/firefly-iii-go/internal/port"
-	"github.com/anthropics/firefly-iii-go/pkg/jwt"
+	"github.com/anthropics/quillow/internal/port"
+	"github.com/anthropics/quillow/pkg/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 
